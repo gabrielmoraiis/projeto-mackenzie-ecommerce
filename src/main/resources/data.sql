@@ -48,3 +48,9 @@ VALUES (2, 3);
 
 INSERT INTO produto_essencias (produto_id, essencia_id)
 VALUES (3, 1);
+
+INSERT INTO opcao_adicional (nome, preco_adicional) VALUES ('Kit de Vareta (5 un.)', 10.00);
+INSERT INTO opcao_adicional (nome, preco_adicional) VALUES ('Embalagem para Presente', 5.50);
+INSERT INTO produto_opcoes_adicionais (produto_id, opcao_adicional_id) VALUES (2, 1);
+INSERT INTO produto_opcoes_adicionais (produto_id, opcao_adicional_id) VALUES (2, 2);
+INSERT INTO produto_opcoes_adicionais (produto_id, opcao_adicional_id) VALUES (3, 2);

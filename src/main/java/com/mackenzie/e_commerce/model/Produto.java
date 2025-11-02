@@ -42,4 +42,12 @@ public class Produto {
     )
     private List<Essencia> essenciasDisponiveis;
 
+    @ManyToMany
+    @JoinTable(
+            name = "produto_opcoes_adicionais",
+            joinColumns = @JoinColumn(name = "produto_id"),
+            inverseJoinColumns = @JoinColumn(name = "opcao_adicional_id")
+    )
+    private List<OpcaoAdicional> opcoesAdicionais;
+
 }
