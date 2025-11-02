@@ -100,4 +100,49 @@ public class CarrinhoDeComprasService {
 
         return new CarrinhoViewDTO(itensDTO, totalPedido);
     }
+
+    public CarrinhoViewDTO getVisaoItemUnico(UUID itemId) {
+        ItemCarrinho item = itens.stream()
+                .filter(i -> i.getId().equals(itemId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Item do carrinho não encontrado para compra direta"));
+
+        Produto p = produtoRepository.findById(item.getProdutoId())
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        BigDecimal precoUnitario = p.getPreco();
+        String nomeEssencia = null;
+        List<String> nomesOpcoes = new ArrayList<>();
+
+        if (item.getEssenciaId() != null) {
+            Essencia e = essenciaRepository.findById(item.getEssenciaId())
+                    .orElseThrow(() -> new RuntimeException("Essência não encontrada"));
+            nomeEssencia = e.getNome();
+        }
+
+        if (item.getOpcoesAdicionaisIds() != null && !item.getOpcoesAdicionaisIds().isEmpty()) {
+            List<OpcaoAdicional> ops = opcaoAdicionalRepository.findAllById(item.getOpcoesAdicionaisIds());
+            for (OpcaoAdicional op : ops) {
+                precoUnitario = precoUnitario.add(op.getPrecoAdicional());
+                nomesOpcoes.add(op.getNome());
+            }
+        }
+
+        BigDecimal subtotal = precoUnitario.multiply(BigDecimal.valueOf(item.getQuantidade()));
+
+        ItemCarrinhoDTO dto = new ItemCarrinhoDTO();
+        dto.setItemId(item.getId());
+        dto.setProdutoId(p.getId());
+        dto.setNomeProduto(p.getNome());
+        dto.setUrlImagem(p.getUrlImagem());
+        dto.setQuantidade(item.getQuantidade());
+        dto.setEssenciaEscolhida(nomeEssencia);
+        dto.setOpcaoAdicionais(nomesOpcoes);
+        dto.setPrecoUnitario(precoUnitario);
+        dto.setSubTotal(subtotal);
+
+        List<ItemCarrinhoDTO> listaItemUnico = Collections.singletonList(dto);
+
+        return new CarrinhoViewDTO(listaItemUnico, subtotal);
+    }
 }
