@@ -38,4 +38,14 @@ public class CarrinhoController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/item/{itemId}")
+    public ResponseEntity<CarrinhoViewDTO> getItemParaCompraDireta(@PathVariable UUID itemId) {
+        try {
+            CarrinhoViewDTO dto = carrinhoDeComprasService.getVisaoItemUnico(itemId);
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
