@@ -1,5 +1,6 @@
 package com.mackenzie.e_commerce.controller;
 
+import com.mackenzie.e_commerce.dto.AdminPedidoResumoDTO;
 import com.mackenzie.e_commerce.dto.DashboardDTO;
 import com.mackenzie.e_commerce.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -19,5 +22,11 @@ public class AdminController {
     public ResponseEntity<DashboardDTO> getDashboard() {
         DashboardDTO dashboardData = adminService.getDashboardData();
         return ResponseEntity.ok(dashboardData);
+    }
+
+    @GetMapping("/pedidos-em-andamento")
+    public ResponseEntity<List<AdminPedidoResumoDTO>> getPedidosEmAndamento() {
+        List<AdminPedidoResumoDTO> pedidos = adminService.listarPedidosEmAndamento();
+        return ResponseEntity.ok(pedidos);
     }
 }
