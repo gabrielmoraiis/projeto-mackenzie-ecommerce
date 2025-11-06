@@ -1,5 +1,6 @@
 package com.mackenzie.e_commerce.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,10 +10,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
+    @Autowired
+    private SecurityFilter securityFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,23 +36,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/registrar").permitAll()
-
                         .requestMatchers("/api/produtos/**").permitAll()
-
                         .requestMatchers("/api/carrinho/**").permitAll()
-
                         .requestMatchers("/api/pedidos").permitAll()
                         .requestMatchers("/api/pedidos/consulta").permitAll()
-
                         .requestMatchers("/api/pedidos/{id}/pix").permitAll()
-
                         .requestMatchers("/admin/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-
                         .anyRequest().authenticated()
                 )
-                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
-
-        return http.build();
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+    return http.build();
     }
 }

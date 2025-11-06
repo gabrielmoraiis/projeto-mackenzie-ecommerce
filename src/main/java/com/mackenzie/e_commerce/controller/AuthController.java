@@ -4,10 +4,12 @@ import com.mackenzie.e_commerce.dto.ClienteDTO;
 import com.mackenzie.e_commerce.dto.LoginRequestDTO;
 import com.mackenzie.e_commerce.dto.LoginResponseDTO;
 import com.mackenzie.e_commerce.dto.RegistroRequestDTO;
+import com.mackenzie.e_commerce.model.Cliente;
 import com.mackenzie.e_commerce.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,5 +39,16 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(401).build();
         }
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> testEndpoint(
+            @AuthenticationPrincipal Cliente clienteLogado) {
+
+        if (clienteLogado == null) {
+            return ResponseEntity.status(401).body("Acesso negado.");
+        }
+
+        return ResponseEntity.ok("Olá, " + clienteLogado.getEmail() + "! Você está autenticado.");
     }
 }
