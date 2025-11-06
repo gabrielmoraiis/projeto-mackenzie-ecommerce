@@ -3,6 +3,7 @@ package com.mackenzie.e_commerce.model;
 public enum StatusPedido {
     AGUARDANDO_PAGAMENTO,
     PAGAMENTO_REJEITADO,
+    PAGAMENTO_CONFIRMADO,
     PEDIDO_RECEBIDO,
     EM_PRODUCAO,
     PRONTO,

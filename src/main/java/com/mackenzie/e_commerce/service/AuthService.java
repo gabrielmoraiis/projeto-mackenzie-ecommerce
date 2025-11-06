@@ -4,6 +4,7 @@ import com.mackenzie.e_commerce.dto.ClienteDTO;
 import com.mackenzie.e_commerce.dto.LoginRequestDTO;
 import com.mackenzie.e_commerce.dto.LoginResponseDTO;
 import com.mackenzie.e_commerce.dto.RegistroRequestDTO;
+import com.mackenzie.e_commerce.enums.Role;
 import com.mackenzie.e_commerce.model.Cliente;
 import com.mackenzie.e_commerce.repository.ClienteRepository;
 import com.mackenzie.e_commerce.security.JwtTokenService;
@@ -38,8 +39,8 @@ public class AuthService {
         novoCliente.setNomeCompleto(dto.getNomeCompleto());
         novoCliente.setEmail(dto.getEmail());
         novoCliente.setWhatsapp(dto.getWhatsapp());
-
         novoCliente.setSenha(passwordEncoder.encode(dto.getSenha()));
+        novoCliente.setRole(Role.ROLE_CLIENTE);
 
         Cliente clienteSalvo = clienteRepository.save(novoCliente);
 

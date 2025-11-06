@@ -54,3 +54,21 @@ INSERT INTO opcao_adicional (nome, preco_adicional) VALUES ('Embalagem para Pres
 INSERT INTO produto_opcoes_adicionais (produto_id, opcao_adicional_id) VALUES (2, 1);
 INSERT INTO produto_opcoes_adicionais (produto_id, opcao_adicional_id) VALUES (2, 2);
 INSERT INTO produto_opcoes_adicionais (produto_id, opcao_adicional_id) VALUES (3, 2);
+
+
+INSERT INTO cliente (nome_completo, email, whatsapp, senha, role)
+VALUES ('Administrador', 'admin@email.com', '11000000000',
+        '$2a$10$4THJYH7TdQao4ZDCVtDk1uq8IY0hJIfhJWi6mPiSkhuoi/FLgEQQe',
+        'ROLE_ADMIN');
+
+INSERT INTO endereco (id, rua, numero, bairro, cidade, estado, cep)
+VALUES (1, 'Rua Exemplo Fictício', '123', 'Centro', 'São Paulo', 'SP', '01000-000');
+
+INSERT INTO pedido (cliente_id, endereco_id, status, total_pedido, data_criacao)
+VALUES (1, 1, 'PAGAMENTO_CONFIRMADO', 150.75, '2025-11-05T10:00:00');
+
+INSERT INTO pedido (cliente_id, endereco_id, status, total_pedido, data_criacao)
+VALUES (1, 1, 'EM_PRODUCAO', 210.00, '2025-11-06T17:00:00');
+
+INSERT INTO pedido (cliente_id, endereco_id, status, total_pedido, data_criacao)
+VALUES (1, 1, 'AGUARDANDO_PAGAMENTO', 49.90, '2025-11-06T18:00:00');
