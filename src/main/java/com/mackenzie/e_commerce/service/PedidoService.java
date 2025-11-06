@@ -6,6 +6,8 @@ import com.mackenzie.e_commerce.repository.ClienteRepository;
 import com.mackenzie.e_commerce.repository.PedidoRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,9 +33,9 @@ public class PedidoService {
     }
 
     @Transactional
-    public Pedido criarPedido(CheckoutRequestDTO request) {
-
-        Cliente cliente = findOrCreateCliente(request);
+    public PedidoDetalhadoDTO criarPedido(CheckoutRequestDTO request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Cliente cliente = getClienteFromAuthOrDto(authentication, request);
 
         Endereco endereco = montarEndereco(request.getEndereco());
 
@@ -61,7 +63,6 @@ public class PedidoService {
             item.setEssenciaEscolhida(itemDTO.getEssenciaEscolhida());
             item.setPrecoUnitarioSnapshot(itemDTO.getPrecoUnitario());
             item.setSubtotalSnapshot(itemDTO.getSubTotal());
-
             if (itemDTO.getOpcaoAdicionais() != null && !itemDTO.getOpcaoAdicionais().isEmpty()) {
                 item.setOpcoesAdicionais(String.join(", ", itemDTO.getOpcaoAdicionais()));
             }
@@ -78,7 +79,28 @@ public class PedidoService {
             carrinhoDeComprasService.limparCarrinho();
         }
 
-        return pedidoSalvo;
+        List<ItemPedidoConsultaDTO> itensDTO = pedidoSalvo.getItens().stream()
+                .map(this::mapItemPedidoToConsultaDTO)
+                .collect(Collectors.toList());
+
+        return new PedidoDetalhadoDTO(pedidoSalvo, itensDTO);
+    }
+
+    private Cliente getClienteFromAuthOrDto(Authentication authentication, CheckoutRequestDTO request) {
+
+        if (authentication != null &&
+                authentication.isAuthenticated() &&
+                authentication.getPrincipal() instanceof Cliente) {
+
+            return (Cliente) authentication.getPrincipal();
+        } else {
+            if (request.getEmail() == null || request.getNomeCompleto() == null || request.getWhatsapp() == null) {
+                throw new IllegalArgumentException(
+                        "Nome completo, e-mail e whatsapp são obrigatórios para checkout como convidado.");
+            }
+
+            return findOrCreateCliente(request);
+        }
     }
 
     private PedidoConsultaDTO mapPedidoToConsultaDTO(Pedido pedido) {

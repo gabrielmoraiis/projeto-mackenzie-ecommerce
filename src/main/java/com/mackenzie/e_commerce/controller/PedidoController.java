@@ -1,12 +1,11 @@
 package com.mackenzie.e_commerce.controller;
 
 import com.mackenzie.e_commerce.dto.CheckoutRequestDTO;
-//import com.mackenzie.e_commerce.dto.PixResponseDTO;
 import com.mackenzie.e_commerce.dto.PedidoConsultaDTO;
-import com.mackenzie.e_commerce.model.ItemPedido;
+import com.mackenzie.e_commerce.dto.PedidoDetalhadoDTO;
 import com.mackenzie.e_commerce.model.Pedido;
-//import com.mackenzie.e_commerce.service.PagamentoService;
 import com.mackenzie.e_commerce.service.PedidoService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -24,10 +23,13 @@ public class PedidoController {
 //    private final PagamentoService pagamentoService;
 
     @PostMapping
-    public ResponseEntity<Pedido> finalizarPedido(@RequestBody CheckoutRequestDTO request) {
+    public ResponseEntity<PedidoDetalhadoDTO> finalizarPedido(
+            @Valid @RequestBody CheckoutRequestDTO request) {
         try {
-            Pedido novoPedido = pedidoService.criarPedido(request);
+            PedidoDetalhadoDTO novoPedido = pedidoService.criarPedido(request);
             return ResponseEntity.ok(novoPedido);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -35,7 +37,7 @@ public class PedidoController {
 
     @GetMapping("/consulta")
     public ResponseEntity<List<PedidoConsultaDTO>> consultaPedido(@RequestParam @NotBlank @Email String email) {
-        if(email == null || email.trim().isEmpty()) {
+        if (email == null || email.trim().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
