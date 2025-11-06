@@ -2,25 +2,52 @@ package com.mackenzie.e_commerce.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/produtos/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated()
-                );
 
-        http.csrf(csrf -> csrf.disable());
-        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/registrar").permitAll()
+
+                        .requestMatchers("/api/produtos/**").permitAll()
+
+                        .requestMatchers("/api/carrinho/**").permitAll()
+
+                        .requestMatchers("/api/pedidos").permitAll()
+                        .requestMatchers("/api/pedidos/consulta").permitAll()
+
+                        .requestMatchers("/api/pedidos/{id}/pix").permitAll()
+
+                        .requestMatchers("/admin/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+
+                        .anyRequest().authenticated()
+                )
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
     }

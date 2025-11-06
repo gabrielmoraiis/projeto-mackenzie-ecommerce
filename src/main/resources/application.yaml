@@ -19,3 +19,6 @@ spring:
 
 mercadopago:
   access-token: ${MP_ACCESS_TOKEN}
+
+jwt:
+  secret: ${JWT_SECRET}

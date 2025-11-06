@@ -1,9 +1,6 @@
 package com.mackenzie.e_commerce.service;
 
-import com.mackenzie.e_commerce.dto.CarrinhoViewDTO;
-import com.mackenzie.e_commerce.dto.CheckoutRequestDTO;
-import com.mackenzie.e_commerce.dto.EnderecoDTO;
-import com.mackenzie.e_commerce.dto.ItemCarrinhoDTO;
+import com.mackenzie.e_commerce.dto.*;
 import com.mackenzie.e_commerce.model.*;
 import com.mackenzie.e_commerce.repository.ClienteRepository;
 import com.mackenzie.e_commerce.repository.PedidoRepository;
@@ -15,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +20,15 @@ public class PedidoService {
     private final PedidoRepository pedidoRepository;
     private final ClienteRepository clienteRepository;
     private final CarrinhoDeComprasService carrinhoDeComprasService;
+
+    public List<PedidoConsultaDTO> consultarPedidosPorEmail(String email) {
+
+        List<Pedido> pedidos = pedidoRepository.findByClienteEmailOrderByDataCriacaoDesc(email);
+
+        return pedidos.stream()
+                .map(this::mapPedidoToConsultaDTO)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public Pedido criarPedido(CheckoutRequestDTO request) {
@@ -72,6 +79,31 @@ public class PedidoService {
         }
 
         return pedidoSalvo;
+    }
+
+    private PedidoConsultaDTO mapPedidoToConsultaDTO(Pedido pedido) {
+        PedidoConsultaDTO pedidoDTO = new PedidoConsultaDTO();
+        pedidoDTO.setId(pedido.getId());
+        pedidoDTO.setDataCriacao(pedido.getDataCriacao());
+        pedidoDTO.setStatus(pedido.getStatus());
+        pedidoDTO.setTotalPedido(pedido.getTotalPedido());
+
+        List<ItemPedidoConsultaDTO> itemDTOs = pedido.getItens().stream()
+                .map(this::mapItemPedidoToConsultaDTO)
+                .collect(Collectors.toList());
+
+        pedidoDTO.setItens(itemDTOs);
+        return pedidoDTO;
+    }
+
+    private ItemPedidoConsultaDTO mapItemPedidoToConsultaDTO(ItemPedido item) {
+        ItemPedidoConsultaDTO itemDTO = new ItemPedidoConsultaDTO();
+        itemDTO.setNomeProduto(item.getNomeProduto());
+        itemDTO.setQuantidade(item.getQuantidade());
+        itemDTO.setEssenciaEscolhida(item.getEssenciaEscolhida());
+        itemDTO.setOpcoesAdicionais(item.getOpcoesAdicionais());
+        itemDTO.setSubTotalSnapshot(item.getSubtotalSnapshot());
+        return itemDTO;
     }
 
     private CarrinhoViewDTO getItensParaCheckout(UUID directBuyItemId) {
