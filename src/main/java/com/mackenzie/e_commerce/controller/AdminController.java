@@ -3,13 +3,12 @@ package com.mackenzie.e_commerce.controller;
 import com.mackenzie.e_commerce.dto.AdminPedidoResumoDTO;
 import com.mackenzie.e_commerce.dto.DashboardDTO;
 import com.mackenzie.e_commerce.dto.PedidoDetalhadoDTO;
+import com.mackenzie.e_commerce.dto.UpdateStatusRequestDTO;
 import com.mackenzie.e_commerce.service.AdminService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,10 +32,26 @@ public class AdminController {
     }
 
     @GetMapping("/pedidos/{id}")
-    public ResponseEntity<PedidoDetalhadoDTO> getDetalhesPedido( @PathVariable Long id) {
+    public ResponseEntity<PedidoDetalhadoDTO> getDetalhesPedido(@PathVariable Long id) {
         try {
             PedidoDetalhadoDTO pedidoDetalhado = adminService.getDetalhesPedido(id);
             return ResponseEntity.ok(pedidoDetalhado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/pedidos/{id}/status")
+    public ResponseEntity<PedidoDetalhadoDTO> atualizarStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateStatusRequestDTO dto) {
+        try {
+            PedidoDetalhadoDTO pedidoAtualizado = adminService.atualizarStatusPedido(id, dto);
+            return ResponseEntity.ok(pedidoAtualizado);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
