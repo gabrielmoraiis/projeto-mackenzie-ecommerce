@@ -22,7 +22,10 @@ public class AdminService {
     private static final EnumSet<StatusPedido> STATUS_MANUAIS_PERMITIDOS = EnumSet.of(
             StatusPedido.PEDIDO_RECEBIDO,
             StatusPedido.EM_PRODUCAO,
-            StatusPedido.PRONTO
+            StatusPedido.PRONTO,
+            StatusPedido.PAGAMENTO_CONFIRMADO,
+            StatusPedido.ENTREGUE,
+            StatusPedido.CANCELADO
     );
 
     public DashboardDTO getDashboardData() {
