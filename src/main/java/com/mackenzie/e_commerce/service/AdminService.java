@@ -25,7 +25,10 @@ public class AdminService {
             StatusPedido.PRONTO,
             StatusPedido.PAGAMENTO_CONFIRMADO,
             StatusPedido.ENTREGUE,
-            StatusPedido.CANCELADO
+            StatusPedido.CANCELADO,
+            StatusPedido.AGUARDANDO_PAGAMENTO,
+            StatusPedido.PAGAMENTO_REJEITADO,
+            StatusPedido.ENVIADO
     );
 
     public DashboardDTO getDashboardData() {
@@ -42,10 +45,15 @@ public class AdminService {
     public List<AdminPedidoResumoDTO> listarPedidosEmAndamento() {
 
         List<StatusPedido> statusesEmAndamento = List.of(
+                StatusPedido.AGUARDANDO_PAGAMENTO,
                 StatusPedido.PAGAMENTO_CONFIRMADO,
                 StatusPedido.PEDIDO_RECEBIDO,
                 StatusPedido.EM_PRODUCAO,
-                StatusPedido.PRONTO
+                StatusPedido.PRONTO,
+                StatusPedido.PAGAMENTO_REJEITADO,
+                StatusPedido.ENVIADO,
+                StatusPedido.ENTREGUE,
+                StatusPedido.CANCELADO
         );
 
         List<Pedido> pedidos = pedidoRepository.findByStatusInOrderByDataCriacaoAsc(

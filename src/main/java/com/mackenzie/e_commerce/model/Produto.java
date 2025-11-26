@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,7 +41,8 @@ public class Produto {
             joinColumns = @JoinColumn(name = "produto_id"),
             inverseJoinColumns = @JoinColumn(name = "essencia_id")
     )
-    private List<Essencia> essenciasDisponiveis;
+
+    private List<Essencia> essenciasDisponiveis = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(

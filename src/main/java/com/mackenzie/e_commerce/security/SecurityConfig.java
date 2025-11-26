@@ -38,6 +38,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/registrar").permitAll()
                         .requestMatchers("/api/produtos/**").permitAll()
                         .requestMatchers("/api/carrinho/**").permitAll()
+                        .requestMatchers("/api/essencias").permitAll()
+                        .requestMatchers("/api/opcoes-adicionais").permitAll()
                         .requestMatchers("/api/pedidos").permitAll()
                         .requestMatchers("/api/pedidos/consulta").permitAll()
                         .requestMatchers("/api/pedidos/{id}/pix").permitAll()
