@@ -15,4 +15,11 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
             @Param("nome") String nome,
             @Param("categoriaId") Long categoriaId
     );
+
+    @Query("SELECT p FROM Produto p WHERE " +
+            "(:nome IS NULL OR LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%'))) AND " +
+            "(:categoriaId IS NULL OR p.categoria.id = :categoriaId)")
+    List<Produto> buscarComFiltros(@Param("nome") String nome, @Param("categoriaId") Long categoriaId);
+
+
 }

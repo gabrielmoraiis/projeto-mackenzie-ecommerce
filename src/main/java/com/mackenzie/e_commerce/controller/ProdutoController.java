@@ -35,8 +35,11 @@ public class ProdutoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Produto>> listarTodos() {
-        List<Produto> produtos = produtoService.listarTodos();
+    public ResponseEntity<List<Produto>> listarTodos(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) Long categoriaId
+    ) {
+        List<Produto> produtos = produtoService.listarComFiltros(nome, categoriaId);
         return ResponseEntity.ok().body(produtos);
     }
 

@@ -34,6 +34,10 @@ public class ProdutoService {
         return produtoRepository.filtrarPorNomeECategoria(nome, categoriaId);
     }
 
+    public List<Produto> listarComFiltros(String nome, Long categoriaId) {
+        return produtoRepository.buscarComFiltros(nome, categoriaId);
+    }
+
     public List<Produto> listarTodos() {
         return produtoRepository.findAll();
     }
